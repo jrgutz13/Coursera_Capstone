@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta content='[]' name='active-experiments'>
+<meta content='{&quot;userId&quot;:2435284}' name='help-api-product-data'>
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="rUhkQ/eXu7yV+LvntKazKzYZs2SvozgArW7mxkXprQNG3tsYlePw3xsJNfIxHLmoOnN0x16nRQTLvlU/Z1cOQg==" />
+<title>Exploring an Ecommerce Dataset using SQL in Google BigQuery | Qwiklabs</title>
+<meta content='width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0' name='viewport'>
+<meta content='In this lab, you learn to use BigQuery to find data, query the data-to-insights public dataset, and write and execute queries.
+' name='description'>
+<meta content='Qwiklabs' name='author'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='Exploring an Ecommerce Dataset using SQL in Google BigQuery | Qwiklabs' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/favicon-144.png' property='og:image'>
+<meta content='Qwiklabs' property='og:site_name'>
+<meta content='In this lab, you learn to use BigQuery to find data, query the data-to-insights public dataset, and write and execute queries.
+' property='og:description'>
+<meta content='/qwiklabs_logo_900x887.png' property='og:logo' size='900x887'>
+<meta content='/qwiklabs_logo_994x187.png' property='og:logo' size='994x187'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/favicon-144.png' property='msapplication-TileImage'>
+<link href='/favicon-32.png' rel='shortcut icon'>
+<link color='#3681E4' href='/favicon-svg.svg' rel='mask-icon'>
+<link href='/favicon-180.png' rel='apple-touch-icon-precomposed'>
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Material+Icons|Google+Material+Icons" />
+
+
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Julio","lastname":"R Gutierrez","fullname":"Julio R Gutierrez","company":"Coursera","email":"jrgutz@gmail.com","origin":"googlecoursera-run, lti-coursera","subscriptions":0,"id":"2c78ef73fcbbb1d436421ad81ccbdb14","qlCreatedAt":"2020-02-08 21:32:06 UTC","optIn":null};gon.segment="j4Im8pqIko0Lxq4wVVZWMPMM0EroHUvb";gon.deployment="googlecoursera-run";
+//]]>
+</script>
+<script src='https://www.google.com/recaptcha/api.js?render=6LeVI8IUAAAAAJNdox5eTkYrw9SbvhZ1TFyv3iHr'></script>
+<script type='application/ld+json'>
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id='ze-snippet' src='https://static.zdassets.com/ekr/snippet.js?key=511e4158-0aec-4e3c-b2e6-4daa1769f51e'></script>
+
+
+
+<link rel="stylesheet" media="all" href="https://cdn.qwiklabs.com/assets/application-e7792218dafb27e63e6f121fdd09b602704ee78d1ea72673eddee42d08af913b.css" />
+<script>
+  EVENT_SOURCE_BASE_URL = "https://googlecoursera-run.qwiklabs.com/nchan-sub?id=";
+</script>
+<script src="https://cdn.qwiklabs.com/polyfills/webcomponents-loader.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors-cbea9d6504d648f41b6d1a6458989185d5b2239ba65101f663f9767edab65d55.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-45d462772c30000424907184f70c7157e95fb6227698d1671c5051818a6f60d8.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-62dd18a5d24cafd385e8d522b9397c4c78c80e392576bae9fcd6e2f994fee522.js"></script>
+</head>
+<body class='focuses focuses-show lab-show l-full no-nav'>
+<div class='header-container'>
+<div class='header'>
+<a class='mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect header__button header__button--nav header__nav-panel-button js-nav-toggle'>
+<i class='material-icons'>menu</i>
+</a>
+<div class='header__title'>
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--nav" href="https://googlecoursera.qwiklabs.com/accept_terms_and_conditions"><ql-icon>arrow_back</ql-icon></a>
+
+<h1 class='headline-5'>
+Exploring an Ecommerce Dataset using SQL in Google BigQuery
+</h1>
+</div>
+<div class='header__actions'>
+<a class='mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--action header__button--search js-header-search-bar-button'>
+<i class='material-icons'>search</i>
+</a>
+
+<ql-help context="lab" productdata="{&quot;userId&quot;:2435284}" data-analytics-action="opened_help" data-analytics-label="lab"></ql-help>
+<a class='header-my-account-button mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect js-my-account-button'>
+<img class="avatar " src="https://secure.gravatar.com/avatar/8cd559dee5d9096b9bc4979bed88227d.png?s=80&amp;d=mm" />
+</a>
+<div class='header-my-account-menu js-my-account-menu'>
+<div class='card elevation-2 no-padding'>
+<div class='my-account-menu__top'>
+<img class="avatar " src="https://secure.gravatar.com/avatar/8cd559dee5d9096b9bc4979bed88227d.png?s=80&amp;d=mm" />
+<div class='my-account-menu__info'>
+<h4 class='subtitle-headline-1'>
+Julio R Gutierrez
+</h4>
+<p class='body-2 text--gray'>
+<span>jrgutz@gmail.com</span>
+</p>
+<a class="button" href="/my_account/profile">My Account</a>
+</div>
+</div>
+<div class='my-account-menu__bottom'>
+<a class="text--green subtitle-headline-2" href="/my_account/credits">0 Credits
+</a><a data-analytics-action="clicked_sign_out" class="button button--hairline" rel="nofollow" data-method="delete" href="/users/sign_out">Sign Out</a>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<div class='header__search-bar js-header-search-bar'>
+<form id="catalog-search-mobile" onsubmit="ql.catalogSearchFilter(); return false;" action="/searches/elasticsearch" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="AFy9P2CLtu+xGufkbOyzA6Y894omTt22qJr+wocJuJ/rygJkAv/9jD/rafHpVrmAqlYwKddKoLLOSk07pbcb3g==" />
+<input type="text" name="keywords" id="keywords" placeholder="Search" maxlength="255" />
+</form>
+
+<a class='mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button'>
+<i class='material-icons'>close</i>
+</a>
+</div>
+</div>
+
+<nav class='nav-bar'>
+<a class="nav-bar__item js-navigation-button" href="/"><ql-icon class='nav-bar__item__icon'>
+home
+</ql-icon>
+<span class='nav-bar__item__label'>
+Home
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="/catalog"><ql-icon class='nav-bar__item__icon'>
+school
+</ql-icon>
+<span class='nav-bar__item__label'>
+Catalog
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="/my_learning"><ql-icon class='nav-bar__item__icon'>
+event_note
+</ql-icon>
+<span class='nav-bar__item__label'>
+My Learning
+</span>
+</a>
+</nav>
+
+<nav class='nav-panel js-nav-panel'>
+<div class='nav-panel__logo'>
+<div class='logo logo--blue'></div>
+</div>
+<a title="Home" tabindex="-1" class="nav-panel__item js-navigation-button" href="/"><ql-icon class='nav-panel__item__icon'>
+home
+</ql-icon>
+<div class='nav-panel__item__label'>
+Home
+</div>
+</a>
+<a title="Catalog" tabindex="-1" class="nav-panel__item js-navigation-button" href="/catalog"><ql-icon class='nav-panel__item__icon'>
+school
+</ql-icon>
+<div class='nav-panel__item__label'>
+Catalog
+</div>
+</a>
+<a title="My Learning" tabindex="-1" class="nav-panel__item js-navigation-button" href="/my_learning"><ql-icon class='nav-panel__item__icon'>
+event_note
+</ql-icon>
+<div class='nav-panel__item__label'>
+My Learning
+</div>
+</a>
+<div class='nav-panel__spacer'></div>
+<a title="Profile" tabindex="-1" class="nav-panel__item js-navigation-button" href="/my_account/profile"><ql-icon class='nav-panel__item__icon'>
+account_circle
+</ql-icon>
+<div class='nav-panel__item__label'>
+Profile
+</div>
+</a>
+<a title="Credits &amp; Subscriptions" tabindex="-1" class="nav-panel__item js-navigation-button" href="/my_account/credits"><ql-icon class='nav-panel__item__icon'>
+money
+</ql-icon>
+<div class='nav-panel__item__label'>
+Credits &amp; Subscriptions
+</div>
+</a>
+<a title="Security" tabindex="-1" class="nav-panel__item js-navigation-button" href="/my_account/security"><ql-icon class='nav-panel__item__icon'>
+security
+</ql-icon>
+<div class='nav-panel__item__label'>
+Security
+</div>
+</a>
+<div class='nav-panel__spacer'></div>
+<a class="nav-panel__item" tabindex="-1" href="#"><ql-help>
+<div class='nav-panel__help-item'>
+<ql-icon class='nav-panel__item__icon'>help</ql-icon>
+<div class='nav-panel__item__label'>Help</div>
+</div>
+</ql-help>
+</a><div class='nav-panel__small-links'>
+<a tabindex="-1" href="/privacy_policy">Privacy</a>
+<a tabindex="-1" href="/terms_of_service">Terms</a>
+</div>
+</nav>
+<div class='nav-panel__overlay js-nav-toggle'></div>
+
+<main class='js-main'>
+<span class='hidden' id='flash-sibling-before'></span>
+
+<div class='l-main-wrapper' id='main-wrapper'>
+
+
+
+
+
+
+
+<div class='js-lab-state' data-analytics-payload='{&quot;label&quot;:&quot;Exploring an Ecommerce Dataset using SQL in Google BigQuery&quot;,&quot;lab_name&quot;:&quot;Exploring an Ecommerce Dataset using SQL in Google BigQuery&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;googlecoursera-run&quot;}' data-focus-id='35223' data-lab-billing-limit='0.0' data-lab-duration='5400' data-parent='classroom'></div>
+<ql-lab-control-panel class='js-lab-control-panel l-lab-control-panel' connectionDetails='[]' connectionFiles='[]' labControlButton='{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}' labTimer='{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:5400}' studentResources='[]'></ql-lab-control-panel>
+<div class='l-lab-main-body'>
+<div class='js-lab-content lab-content'>
+<div class='alert alert--fake js-alert'>
+<p class='alert__message js-alert-message'></p>
+<a class='alert__close js-alert-close'>
+<i class='fa fa-times'></i>
+</a>
+<iframe class='l-ie-iframe-fix'></iframe>
+</div>
+<div class='lab-content__markdown-wrapper'>
+<div class='lab-preamble'>
+<h1 class='lab-preamble__title'>
+Exploring an Ecommerce Dataset using SQL in Google BigQuery
+</h1>
+<div class='lab-preamble__details subtitle-headline-1'>
+<span>1 hour 30 minutes</span>
+<span>Free</span>
+<div class='lab__rating'>
+<a href="/focuses/35223/reviews?parent=catalog"><div class='rateit' data-rateit-readonly='true' data-rateit-value='4.38'></div>
+
+</a><a data-target='#lab-review-modal' data-toggle='modal'>
+Rate Lab
+</a>
+</div>
+</div>
+</div>
+
+<div class='lab-content__inner-wrapper'>
+<div class='js-markdown-instructions lab-content__markdown markdown-lab-instructions' id='markdown-lab-instructions'>
+
+
+
+<h2 id="step1">Overview</h2>
+<p>BigQuery is Google's fully managed, NoOps, low cost analytics database. With BigQuery you can query terabytes and terabytes of data without having any infrastructure to manage or needing a database administrator. BigQuery uses SQL and can take advantage of the pay-as-you-go model. BigQuery allows you to focus on analyzing data to find meaningful insights.</p>
+<p>We have a newly available  <a href="https://www.en.advertisercommunity.com/t5/Articles/Introducing-the-Google-Analytics-Sample-Dataset-for-BigQuery/ba-p/1676331#">ecommerce dataset</a> that has millions of Google Analytics records for the  <a href="https://shop.googlemerchandisestore.com/">Google Merchandise Store</a> loaded into a table in BigQuery. In this lab, you use a copy of that dataset. Sample scenarios are provided, from which you look at the data and ways to remove duplicate information. The lab then steps you through further analysis the data.</p>
+<p>To follow and experiment with the BigQuery queries provided to analyze the data, see <a href="https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax">Standard SQL Query Syntax</a>.</p>
+<h3>What you'll do</h3>
+<p>In this lab, you use BigQuery to:</p>
+<ul>
+<li>
+<p>Access an ecommerce dataset</p>
+</li>
+<li>
+<p>Look at the dataset metadata</p>
+</li>
+<li>
+<p>Remove duplicate entries</p>
+</li>
+<li>
+<p>Write and execute queries</p>
+</li>
+</ul>
+<h2 id="step2">Setup and requirements</h2>
+<h4>What you'll need</h4>
+<p>To complete this lab, you’ll need:</p>
+<ul>
+<li>
+<p>Access to a standard internet browser (Chrome browser recommended).</p>
+</li>
+<li>
+<p>Time. Note the lab’s <strong>Completion</strong> time in Qwiklabs. This is an estimate of the time it should take to complete all steps.  Plan your schedule so you have time to complete the lab. Once you start the lab, you will not be able to pause and return later (you begin at step 1 every time you start a lab).</p>
+</li>
+<li>
+<p>The lab's <strong>Access</strong> time is how long your lab resources will be available. If you finish your lab with access time still available, you will be able to explore the Google Cloud Platform or work on any section of the lab that was marked "if you have time". Once the Access time runs out, your lab will end and all resources will terminate.</p>
+</li>
+<li>
+<p>You <strong>DO NOT</strong> need a Google Cloud Platform account or project. An account, project and associated resources are provided to you as part of this lab.</p>
+</li>
+<li>
+<p>If you already have your own GCP account, make sure you do not use it for this lab.</p>
+</li>
+<li>
+<p>If your lab prompts you to log into the console, <strong>use only the student account provided to you by the lab</strong>. This prevents you from incurring charges for lab activities in your personal GCP account.</p>
+</li>
+</ul>
+<h4>Start your lab</h4>
+<p>When you are ready, click <strong>Start Lab</strong>. You can track your lab’s progress with the status bar at the top of your screen.</p>
+<aside>
+<strong>Important</strong> What is happening during this time?
+  Your lab is spinning up GCP resources for you behind the scenes, including an account, a project, resources within the project, and permission for you to control the resources needed to run the lab. This means that instead of spending time manually setting up a project and building resources from scratch as part of your lab, you can begin learning more quickly.
+
+</aside>
+<h4>Find Your Lab’s GCP Username and Password</h4>
+<p>To access the resources and console for this lab, locate the Connection Details panel in Qwiklabs.  Here you will find the account ID and password for the account you will use to log in to the Google Cloud Platform:</p>
+<p><img alt="Open Google Console" src="https://cdn.qwiklabs.com/0d78dhX6IVMVWmixCPPSBbmi5O2GPokCXf1Ps1AkTgI%3D"></p>
+<p>If your lab provides other resource identifiers or connection-related information, it will appear on this panel as well.</p>
+
+<h4>Log in to Google Cloud Console</h4>
+<p>Using the Qwiklabs browser tab/window or the separate browser you are using for the Qwiklabs session, copy the Username from the Connection Details panel and click the <strong>Open Google Console</strong> button.</p>
+<p>You'll be asked to Choose an account. Click <strong>Use another account</strong>.
+<img alt="Google_choose_Account" src="https://cdn.qwiklabs.com/wNoohdL%2BwyBavWAhxkN5euPH2ulJhiOzoBlmi1%2BmGSw%3D"></p>
+<p>Paste in the Username, and then the Password as prompted:</p>
+<p><img alt="Sign in to continue to Google Cloud Platform" src="https://cdn.qwiklabs.com/rP81bHN99Vr7kaKU7fqy2IuSj1rjjNXkD1iunRSBWBw%3D"></p>
+<p>Accept the terms and conditions.</p>
+<p>Since this is a temporary account, which you will only have to access for this one lab:</p>
+<ul>
+<li>Do not add recovery options</li>
+<li>Do not sign up for free trials</li>
+</ul>
+<aside>
+<strong>Note:</strong> You can view the list of services by clicking the GCP Navigation menu button at the top-left next to “Google Cloud Platform”.
+
+  <img alt="Cloud Console Menu" src="https://cdn.qwiklabs.com/RIuVVYUkGtVaWhxtIFJugxyy%2FORWQYw7OrLR0bJlReI%3D">
+</aside>
+
+<h2 id="step3">Pin the Lab Project in BigQuery</h2>
+<p>In this section you add the <strong>data-to-insights</strong> project to your environment resources.</p>
+<ol>
+<li>Click <strong>Navigation menu</strong> &gt; <strong>BigQuery</strong>.</li>
+</ol>
+<p><img alt="nav_bq.png" src="https://cdn.qwiklabs.com/4cRREmmNQLUnsyIscK%2FKrJmz0CuL3LQkCcgn5WbAsJs%3D"></p>
+<p>The Welcome to BigQuery in the Cloud Console message box opens.</p>
+<aside>
+The Welcome to BigQuery in the Cloud Console message box provides a link to the quickstart guide and UI updates.
+
+</aside>
+<ol start="2">
+<li>Click <strong>Done</strong>.</li>
+</ol>
+<p>BigQuery public datasets are not displayed by default in the BigQuery web UI. To open the public datasets project, open
+<a href="https://console.cloud.google.com/bigquery?p=data-to-insights&amp;page=ecommerce">https://console.cloud.google.com/bigquery?p=data-to-insights&amp;page=ecommerce</a> in a new browser window.</p>
+<ol start="3">
+<li>In the left pane, in the Resource section, click <strong>data-to-insights</strong>. In the right pane, click <strong>Pin Project</strong>.</li>
+</ol>
+<p><img alt="pin_project.png" src="https://cdn.qwiklabs.com/Aij0fKC0qe2yt%2BgH8tD2AgpQllVHBM27a2LEgZq3%2BgA%3D"></p>
+<ol start="4">
+<li>
+<p>Close this browser window.</p>
+</li>
+<li>
+<p>Return to and refresh the first BigQuery browser window to refresh the BigQuery web UI.</p>
+</li>
+</ol>
+<p>The <code>data-to-insights</code> project is listed in the Resource section.</p>
+
+<h2 id="step4">Explore ecommerce data and identify duplicate records</h2>
+<p><strong>Scenario</strong>: Your data analyst team exported the Google Analytics logs for an ecommerce website into BigQuery and created a new table of all the raw ecommerce visitor session data.</p>
+<p>Explore the <code>all_sessions_raw</code> table data:</p>
+<ol>
+<li>Click <strong>data-to-insights</strong> to expand the project.</li>
+<li>Click <strong>ecommerce</strong>.</li>
+<li>Click <strong>all_sessions_raw</strong>.</li>
+</ol>
+<p>In the right pane, a section opens that provides 3 views of the table data:</p>
+<ul>
+<li>
+<p>Schema tab: Field name, Type, Mode, and Description; the logical constraints used to organize the data</p>
+</li>
+<li>
+<p>Details tab: Table metadata</p>
+</li>
+<li>
+<p>Preview tab: Table preview</p>
+</li>
+</ul>
+<ol start="4">
+<li>Click the <strong>Details</strong> tab to view the table metadata.</li>
+</ol>
+<p><img alt="view.png" src="https://cdn.qwiklabs.com/V9%2F4IVMnPyjieeGdHvV9F1dPKOzAibkHvqiPfLrY83Q%3D"></p>
+<p>Questions:</p>
+<p><ql-multiple-choice-probe answerindex="0" optiontitles='[
+"Schema",
+"Preview",
+"Details"                      
+]' shuffle="" stem="Which UI tab will show you the data types?">
+</ql-multiple-choice-probe></p>
+<p><ql-multiple-choice-probe answerindex="1" optiontitles='[
+"5.63 GB",
+"Over 21 million",
+"9990000"                      
+]' shuffle="" stem="How many rows are in the dataset?">
+</ql-multiple-choice-probe></p>
+<h3>Identify duplicate rows</h3>
+<p>Seeing a sample amount of data may give you greater intuition for what is included in the dataset. To preview sample rows from the table without using SQL, click the <strong>preview</strong> tab.</p>
+<p>Scan and scroll through the rows. There is no singular field that uniquely identifies a row, so you need advanced logic to identify duplicate rows.</p>
+<p>Your query uses the SQL <code>GROUP BY</code> function on every field and counts (<code>COUNT</code>) where there are rows that have the same values across every field.</p>
+<ul>
+<li>
+<p>If every field is unique, the <code>COUNT</code> will return 1 as there are no other groupings of rows with the exact same value for all fields.</p>
+</li>
+<li>
+<p>If there is a row with the same values for all fields, they will be grouped together and the <code>COUNT</code> will be greater than 1.
+The last part of the query is an aggregation filter using <code>HAVING</code> to only show the results that have a <code>COUNT</code> of duplicates greater than 1.</p>
+</li>
+</ul>
+<ol>
+<li>
+<p>Copy and paste the following query into the <strong>Query editor</strong>, then <strong>Run query</strong> to find duplicate records across all columns.</p>
+</li>
+</ol>
+<pre><code>#standardSQL&#x000A;SELECT COUNT(*) as num_duplicate_rows, * FROM&#x000A;`data-to-insights.ecommerce.all_sessions_raw`&#x000A;GROUP BY&#x000A;fullVisitorId, channelGrouping, time, country, city, totalTransactionRevenue, transactions, timeOnSite, pageviews, sessionQualityDim, date, visitId, type, productRefundAmount, productQuantity, productPrice, productRevenue, productSKU, v2ProductName, v2ProductCategory, productVariant, currencyCode, itemQuantity, itemRevenue, transactionRevenue, transactionId, pageTitle, searchKeyword, pagePathLevel1, eCommerceAction_type, eCommerceAction_step, eCommerceAction_option&#x000A;HAVING num_duplicate_rows &gt; 1;&#x000A;</code></pre>
+<p><ql-multiple-choice-probe answerindex="0" optiontitles='[
+"615",
+"1,015",
+"0",
+"434"
+]' shuffle="" stem="How many duplicate records are in all_sessions_raw?">
+</ql-multiple-choice-probe></p>
+<aside>
+In your own datasets, even if you have a unique key, it is still beneficial to confirm the uniqueness of the rows with COUNT, GROUP BY, and HAVING before you begin your analysis.
+
+</aside>
+<p>To learn how to deduplicate using advanced SQL, check out this query  <a href="https://bigquery.cloud.google.com/savedquery/133415875420:c00d759e2bf54e4dba116c83568ac2cb">here</a>.</p>
+<h3>Analyze the new <code>all_sessions</code> table</h3>
+<p>In this section you use a deduplicated table called <code>all_sessions</code>.</p>
+<p><strong>Scenario:</strong> Your data analyst team has provided you with this query, and your schema experts have identified the key fields that must be unique for each record per your  <a href="https://support.google.com/analytics/answer/3437719?hl=en">schema</a>.</p>
+<p>Run the query to confirm that no duplicates exist, this time in the <code>all_sessions</code> table:</p>
+<pre><code>#standardSQL&#x000A;# schema: https://support.google.com/analytics/answer/3437719?hl=en&#x000A;SELECT&#x000A;fullVisitorId, # the unique visitor ID&#x000A;visitId, # a visitor can have multiple visits&#x000A;date, # session date stored as string YYYYMMDD&#x000A;time, # time of the individual site hit  (can be 0 to many per visitor session)&#x000A;v2ProductName, # not unique since a product can have variants like Color&#x000A;productSKU, # unique for each product&#x000A;type, # a visitor can visit Pages and/or can trigger Events (even at the same time)&#x000A;eCommerceAction_type, # maps to ‘add to cart', ‘completed checkout'&#x000A;eCommerceAction_step,&#x000A;eCommerceAction_option,&#x000A;  transactionRevenue, # revenue of the order&#x000A;  transactionId, # unique identifier for revenue bearing transaction&#x000A;COUNT(*) as row_count&#x000A;FROM&#x000A;`data-to-insights.ecommerce.all_sessions`&#x000A;GROUP BY 1,2,3 ,4, 5, 6, 7, 8, 9, 10,11,12&#x000A;HAVING row_count &gt; 1 # find duplicates&#x000A;</code></pre>
+<p>The query returns zero records.</p>
+<p>Note: In SQL, you can GROUP BY or ORDER BY the index of the column like using "GROUP BY 1" instead of "GROUP BY fullVisitorId"</p>
+<h2 id="step5">Write basic SQL on ecommerce data</h2>
+<p>In this section, you query for insights on the ecommerce dataset.</p>
+<h3>Write a query that shows total unique visitors</h3>
+<p>Your query determines the total views by counting <code>product_views</code> and the number of unique visitors by counting <code>fullVisitorID</code>.</p>
+<ol>
+<li>
+<p>Click <strong>Compose Query</strong>.</p>
+</li>
+<li>
+<p>Write this query in the editor:</p>
+</li>
+</ol>
+<pre><code>#standardSQL&#x000A;SELECT&#x000A;  COUNT(*) AS product_views,&#x000A;  COUNT(DISTINCT fullVisitorId) AS unique_visitors&#x000A;FROM `data-to-insights.ecommerce.all_sessions`;&#x000A;</code></pre>
+<ol start="3">
+<li>To ensure that your syntax is correct, click the real-time query validator icon.</li>
+<li>Click <strong>Run Query</strong>.
+Read the results to view the number of unique visitors.</li>
+</ol>
+<p><strong>Results</strong></p>
+<p><img alt="ee5c2c7ad19434d8.png" src="https://cdn.qwiklabs.com/b9ovF5bGPVLOoKS%2BnA%2FrEgafl9kpnMwY6TysHCDm4S4%3D"></p>
+<p>Now write a query that shows total unique visitors(<code>fullVisitorID</code>) by the referring site (<code>channelGrouping</code>):</p>
+<pre><code>#standardSQL&#x000A;SELECT&#x000A;  COUNT(DISTINCT fullVisitorId) AS unique_visitors,&#x000A;  channelGrouping&#x000A;FROM `data-to-insights.ecommerce.all_sessions`&#x000A;GROUP BY channelGrouping&#x000A;ORDER BY channelGrouping DESC;&#x000A;</code></pre>
+<p><strong>Results</strong></p>
+<p><img alt="fd68fa5a2954a68d.png" src="https://cdn.qwiklabs.com/5yLYag64%2F5mEVHBVMo2dExnIBdJm6CZaX%2Bt6IpBOiZ8%3D"></p>
+<p>Write a query to list all the unique product names (<code>v2ProductName</code>) alphabetically:</p>
+<pre><code>#standardSQL&#x000A;SELECT&#x000A;  (v2ProductName) AS ProductName&#x000A;FROM `data-to-insights.ecommerce.all_sessions`&#x000A;GROUP BY ProductName&#x000A;ORDER BY ProductName&#x000A;</code></pre>
+<p>Tip: In SQL, the ORDER BY clauses defaults to Ascending (ASC) A--&gt;Z. If you want the reverse, try ORDER BY field_name DESC</p>
+<p><ql-multiple-choice-probe answerindex="0" optiontitles='[
+"GROUP BY",
+"SELECT",
+"ORDER BY",
+"STANDARD SQL"
+]' shuffle="" stem="Which part of the previous query deduplicates the records?">
+</ql-multiple-choice-probe></p>
+<p><strong>Results</strong></p>
+<p><img alt="23d3781795755d18.png" src="https://cdn.qwiklabs.com/a9r%2BBTU44UmfC%2BqIFPlvtV8txzfwjy%2Fbw%2Ft%2Bt1a9rtA%3D"></p>
+<p>This query returns a total of 633 products (rows).</p>
+<p><ql-multiple-choice-probe answerindex="0" optiontitles='[
+"633",
+"950",
+"10",
+"511"
+]' shuffle="" stem="How many distinct product names were returned in total?">
+</ql-multiple-choice-probe></p>
+<p>Write a query to list the five products with the most views (<code>product_views</code>) from all visitors (include people who have viewed the same product more than once). Your query counts number of times a product (<code>v2ProductName</code>) was viewed (<code>product_views</code>), puts the list in descending order, and lists the top 5 entries:</p>
+<p>Tip: In Google Analytics, a visitor can "view" a product during the following interaction types: 'page', 'screenview', 'event', 'transaction', 'item', 'social', 'exception', 'timing'. For our purposes, simply filter for only type = 'PAGE'.</p>
+<pre><code>#standardSQL&#x000A;SELECT&#x000A;  COUNT(*) AS product_views,&#x000A;  (v2ProductName) AS ProductName&#x000A;FROM `data-to-insights.ecommerce.all_sessions`&#x000A;WHERE type = 'PAGE'&#x000A;GROUP BY v2ProductName&#x000A;ORDER BY product_views DESC&#x000A;LIMIT 5;&#x000A;</code></pre>
+<p><strong>Results</strong></p>
+<p><img alt="98024b791d0c01f4.png" src="https://cdn.qwiklabs.com/Dp5bJkC1CaWW15SKsX%2BasfL9o%2BZdwJyqRp%2Fmmz9UZCM%3D"></p>
+<p>Bonus: Now refine the query to no longer double-count product views for visitors who have viewed a product many times. Each distinct product view should only count once per visitor.</p>
+<pre><code>WITH unique_product_views_by_person AS (&#x000A;-- find each unique product viewed by each visitor&#x000A;SELECT &#x000A; fullVisitorId,&#x000A; (v2ProductName) AS ProductName&#x000A;FROM `data-to-insights.ecommerce.all_sessions`&#x000A;WHERE type = 'PAGE'&#x000A;GROUP BY fullVisitorId, v2ProductName )&#x000A;&#x000A;&#x000A;-- aggregate the top viewed products and sort them&#x000A;SELECT&#x000A;  COUNT(*) AS unique_view_count,&#x000A;  ProductName &#x000A;FROM unique_product_views_by_person&#x000A;GROUP BY ProductName&#x000A;ORDER BY unique_view_count DESC&#x000A;LIMIT 5&#x000A;</code></pre>
+<p>Tip: You can use the SQL <code>WITH</code> clause to help break apart a complex query into multiple steps. Here we first create a query that finds each unique product per visitor and counts them once. Then the second query performs the aggregation across all visitors and products.</p>
+<p><strong>Results</strong></p>
+<p><img alt="with-clause-results.png" src="https://cdn.qwiklabs.com/dCnyVqvi2oJW3NEkyn7WlMFH0ms1AqMhyqYPzScFrhI%3D"></p>
+<p>Next, expand your previous query to include the total number of distinct products ordered and the total number of total units ordered (<code>productQuantity</code>):</p>
+<pre><code>#standardSQL&#x000A;SELECT&#x000A;  COUNT(*) AS product_views,&#x000A;  COUNT(productQuantity) AS orders,&#x000A;  SUM(productQuantity) AS quantity_product_ordered,&#x000A;  v2ProductName&#x000A;FROM `data-to-insights.ecommerce.all_sessions`&#x000A;WHERE type = 'PAGE'&#x000A;GROUP BY v2ProductName&#x000A;ORDER BY product_views DESC&#x000A;LIMIT 5;&#x000A;</code></pre>
+<p><strong>Results</strong></p>
+<p><img alt="cefe4bb5b680216e.png" src="https://cdn.qwiklabs.com/W%2F67Ixjhx2pRKqCouMLAHX8SopFWTH385fyL3wnNQYQ%3D"></p>
+<p>Questions:</p>
+<p><ql-true-false-probe answer="true" stem="The product with the most views got the most orders.">
+</ql-true-false-probe></p>
+<p><ql-multiple-choice-probe answerindex="1" optiontitles='[
+"Nothing, they are the same",
+"order is the number of orders, quantity_product_ordered is the number of items ordered",
+"order is the number of orders, quantity_product_ordered is the number of items available to be ordered"
+]' shuffle="" stem="What is the difference between orders and quantity_product_ordered?">
+</ql-multiple-choice-probe></p>
+<p>Expand the query to include the average amount of product per order (total number of units ordered/total number of orders, or <code>SUM(productQuantity)</code>/<code>COUNT(productQuantity)</code>).</p>
+<pre><code class="language-sql prettyprint">#standardSQL&#x000A;SELECT&#x000A;  COUNT(*) AS product_views,&#x000A;  COUNT(productQuantity) AS orders,&#x000A;  SUM(productQuantity) AS quantity_product_ordered,&#x000A;  SUM(productQuantity) / COUNT(productQuantity) AS avg_per_order,&#x000A;  (v2ProductName) AS ProductName&#x000A;FROM `data-to-insights.ecommerce.all_sessions`&#x000A;WHERE type = 'PAGE'&#x000A;GROUP BY v2ProductName&#x000A;ORDER BY product_views DESC&#x000A;LIMIT 5;&#x000A;</code></pre>
+<p><strong>Results</strong></p>
+<p><img alt="37dd38ee9e9b3532.png" src="https://cdn.qwiklabs.com/LQG6kiZz%2BJA6hLBFRYJNUqZXtCaA6yzClsjtZH09Ogk%3D"></p>
+<p>Question:</p>
+<p><ql-multiple-choice-probe answerindex="2" optiontitles='[
+"YouTube Custom Decals",
+"Google Mens Short Sleeve Hero Tee Black",
+"YouTube Bottle Infuser"
+]' shuffle="" stem="What product has the highest avg_per_order?">
+</ql-multiple-choice-probe></p>
+<p>The 22 oz YouTube Bottle Infuser had the highest avg_per_order with 9.38 units per order.</p>
+<h2 id="step6">Practice with SQL</h2>
+<p>Are you ready to put your SQL skills to the test? Try these challenge questions!</p>
+<h3>Challenge 1: Calculate a conversion rate</h3>
+<p>Write a conversion rate query for products with these qualities:</p>
+<ul>
+<li>More than 1000 units were added to a cart or ordered</li>
+<li>AND are not frisbees</li>
+</ul>
+<p>Answer these questions:</p>
+<ul>
+<li>How many distinct times was the product part of an order (either complete or incomplete order)?</li>
+<li>How many total units of the product were part of orders (either complete or incomplete)?</li>
+<li>Which product had the highest conversion rate?</li>
+</ul>
+<p>Complete the following partial query:</p>
+<pre><code class="language-sql prettyprint">#standardSQL&#x000A;SELECT &#x000A;  COUNT(*) AS product_views,&#x000A;  COUNT(productQuantity) AS potential_orders,&#x000A;  SUM(productQuantity) AS quantity_product_added,&#x000A;  v2ProductName&#x000A;FROM `data-to-insights.ecommerce.all_sessions`&#x000A;WHERE v2ProductName NOT LIKE 'frisbee' &#x000A;GROUP BY v2ProductName&#x000A;HAVING quantity_product_added &gt; &#x000A;ORDER BY conversion_rate &#x000A;LIMIT 10;&#x000A;</code></pre>
+<p>Possible solution:</p>
+<pre><code class="language-sql prettyprint">#standardSQL&#x000A;SELECT &#x000A;  COUNT(*) AS product_views,&#x000A;  COUNT(productQuantity) AS potential_orders,&#x000A;  SUM(productQuantity) AS quantity_product_added,&#x000A;  (COUNT(productQuantity) / COUNT(*)) AS conversion_rate,&#x000A;  v2ProductName&#x000A;FROM `data-to-insights.ecommerce.all_sessions`&#x000A;WHERE LOWER(v2ProductName) NOT LIKE '%frisbee%' &#x000A;GROUP BY v2ProductName&#x000A;HAVING quantity_product_added &gt; 1000 &#x000A;ORDER BY conversion_rate DESC&#x000A;LIMIT 10;&#x000A;</code></pre>
+<h3>Challenge 2: Track visitor checkout progress</h3>
+<p>Write a query that shows the <code>eCommerceAction_type</code> and the distinct count of <code>fullVisitorId</code> associated with each type.</p>
+<p>Possible solution:</p>
+<pre><code class="language-sql prettyprint">#standardSQL&#x000A;SELECT &#x000A;  COUNT(DISTINCT fullVisitorId) AS number_of_unique_visitors,&#x000A;  eCommerceAction_type&#x000A;FROM `data-to-insights.ecommerce.all_sessions` &#x000A;GROUP BY eCommerceAction_type&#x000A;ORDER BY eCommerceAction_type;&#x000A;</code></pre>
+<p>Bonus:
+You are given this mapping for the action type:
+Unknown = 0
+Click through of product lists = 1
+Product detail views = 2
+Add product(s) to cart = 3
+Remove product(s) from cart = 4
+Check out = 5
+Completed purchase = 6
+Refund of purchase = 7
+Checkout options = 8</p>
+<p>Use a Case Statement to add a new column to your previous query to display the eCommerceAction_type label (such as “Completed purchase”).</p>
+<p>Possible solution</p>
+<pre><code class="language-sql prettyprint">#standardSQL&#x000A;SELECT &#x000A;  COUNT(DISTINCT fullVisitorId) AS number_of_unique_visitors,&#x000A;  eCommerceAction_type,&#x000A;  CASE eCommerceAction_type&#x000A;  WHEN '0' THEN 'Unknown'&#x000A;  WHEN '1' THEN 'Click through of product lists'&#x000A;  WHEN '2' THEN 'Product detail views'&#x000A;  WHEN '3' THEN 'Add product(s) to cart'&#x000A;  WHEN '4' THEN 'Remove product(s) from cart'&#x000A;  WHEN '5' THEN 'Check out'&#x000A;  WHEN '6' THEN 'Completed purchase'&#x000A;  WHEN '7' THEN 'Refund of purchase'&#x000A;  WHEN '8' THEN 'Checkout options'&#x000A;  ELSE 'ERROR'&#x000A;  END AS eCommerceAction_type_label&#x000A;FROM `data-to-insights.ecommerce.all_sessions` &#x000A;GROUP BY eCommerceAction_type&#x000A;ORDER BY eCommerceAction_type;&#x000A;</code></pre>
+<p>What percent of visitors who added something to their cart completed a purchase?</p>
+<p>Answer: 19988 / 56010 = .3568 or 35.68%</p>
+<h3>Challenge 3: Track abandoned carts from high quality sessions</h3>
+<p>Write a query using aggregation functions that returns the unique session IDs of those visitors who have added a product to their cart but never completed checkout (abandoned their shopping cart).</p>
+<p>Possible solution</p>
+<pre><code class="language-sql prettyprint">#standardSQL&#x000A;# high quality abandoned carts&#x000A;SELECT  &#x000A;  #unique_session_id&#x000A;  CONCAT(fullVisitorId,CAST(visitId AS STRING)) AS unique_session_id,&#x000A;  sessionQualityDim,&#x000A;  SUM(productRevenue) AS transaction_revenue,&#x000A;  MAX(eCommerceAction_type) AS checkout_progress&#x000A;FROM `data-to-insights.ecommerce.all_sessions` &#x000A;WHERE sessionQualityDim &gt; 60 # high quality session&#x000A;GROUP BY unique_session_id, sessionQualityDim&#x000A;HAVING &#x000A;  checkout_progress = '3' # 3 = added to cart&#x000A;  AND (transaction_revenue = 0 OR transaction_revenue IS NULL)&#x000A;</code></pre>
+<h2 id="step7">Congratulations!</h2>
+<p>This concludes exploring the data-to-insights ecommerce dataset! You used BigQuery to view and query the data to gain meaningful insight on various aspects of product marketing.</p>
+<p><img alt="bqdataanalysis.png" src="https://cdn.qwiklabs.com/jOzMLx8xazskc0UcLYJnZ4cDpE13GVQWi0FTbVtg8OE%3D"></p>
+<h3>Next steps/learn more</h3>
+<ul>
+<li>Explore <a href="https://cloud.google.com/bigquery/public-data/">BigQuery Public Datasets</a>.</li>
+<li>Already have a Google Analytics account and want to query your own datasets in BigQuery? Follow this  <a href="https://support.google.com/analytics/answer/3416092">export guide</a>.</li>
+<li>Check out <a href="https://medium.com/google-cloud/15-awesome-things-you-probably-didnt-know-about-google-bigquery-6654841fa2dc">15 Awesome things you probably didn’t know about Google BigQuery</a>.</li>
+</ul>
+<h3>Google Cloud Training &amp; Certification</h3>
+<p>...helps you make the most of Google Cloud technologies. <a href="https://cloud.google.com/training/courses">Our classes</a> include technical skills and best practices to help you get up to speed quickly and continue your learning journey. We offer fundamental to advanced level training, with on-demand, live, and virtual options to suit your busy schedule. <a href="https://cloud.google.com/certification/">Certifications</a> help you validate and prove your skill and expertise in Google Cloud technologies.</p>
+
+<p>Manual Last Updated: June 9, 2019</p>
+<p>Lab Last Tested: July 9, 2019</p>
+<p>©2019 Google LLC All rights reserved. Google and the Google logo are trademarks of Google LLC. All other company and product names may be trademarks of the respective companies with which they are associated.</p>
+
+
+
+</div>
+<div class='js-lab-content-outline lab-content__outline'>
+<a href='#step1'>Overview</a><a href='#step2'>Setup and requirements</a><a href='#step3'>Pin the Lab Project in BigQuery</a><a href='#step4'>Explore ecommerce data and identify duplicate records</a><a href='#step5'>Write basic SQL on ecommerce data</a><a href='#step6'>Practice with SQL</a><a href='#step7'>Congratulations!</a>
+</div>
+</div>
+
+</div>
+
+
+</div>
+</div>
+<div class='lab-introduction js-lab-introduction is-hidden'>
+<div class='lab-introduction__inner'>
+<h1 class='headline-1'>Welcome to Your First Lab!</h1>
+<ql-icon-button class='js-skip-button'>close</ql-icon-button>
+<div class='lab-introduction__video'>
+<iframe allow='autoplay; encrypted-media' allowfullscreen frameborder='0' id='lab-introduction' src='https://www.youtube.com/embed/yF7EDXKTmoQ?enablejsapi=1&amp;rel=0&amp;showinfo=0'></iframe>
+</div>
+<a class='js-skip-button button button--outline'>Skip this video</a>
+</div>
+</div>
+
+
+
+</div>
+</main>
+<div class='modal fade' id='lab-details-modal'>
+<div class='modal-container'>
+<div class='mdl-shadow--24dp modal-content'>
+<div class='modal-body'>
+<p class='l-mbm'>
+In this lab, you learn to use BigQuery to find data, query the data-to-insights public dataset, and write and execute queries.
+
+</p>
+<p class='small-label l-mbs'>
+<strong>
+Duration:
+</strong>
+0m setup
+&middot;
+90m access
+&middot;
+90m completion
+</p>
+<p class='small-label l-mbs'>
+<span><strong>Levels: </strong>fundamental</span>
+</p>
+<p class='small-label'>
+<strong>
+Permalink:
+</strong>
+<a href="https://googlecoursera.qwiklabs.com/catalog_lab/1925">https://googlecoursera.qwiklabs.com/catalog_lab/1925</a>
+</p>
+</div>
+<div class='modal-actions'>
+<a class='mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect' data-dismiss='modal'>
+Got It
+</a>
+</div>
+
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix'></iframe>
+</div>
+<div class='modal fade' id='lab-review-modal'>
+<div class='modal-container'>
+<div class='mdl-shadow--24dp modal-content'>
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><div class='modal-body'>
+<p class='label'>
+How satisfied are you with this lab?*
+</p>
+<div class='rateit js-rateit' data-rateit-max='5' data-rateit-min='0' data-rateit-resetable='false' data-rateit-step='1' data-rateit-value='0'></div>
+<div class='l-mtm'>
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="2435284" name="lab_review[user_id]" id="lab_review_user_id" /></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="3675" name="lab_review[classroom_id]" id="lab_review_classroom_id" /></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="1925" name="lab_review[lab_id]" id="lab_review_lab_id" /></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="35223" name="lab_review[focus_id]" id="lab_review_focus_id" /></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating" /></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Comment</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment">
+</textarea></div></div>
+</div>
+</div>
+<div class='modal-actions'>
+<a class='mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect' data-dismiss='modal'>
+Cancel
+</a>
+<input type="submit" name="commit" value="Submit" disabled="disabled" class="btn mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary" id="submit" data-disabled="false" data-disable-with="Submit" />
+</div>
+</form>
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix'></iframe>
+</div>
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    initLabContent( );
+  ql.labOutline.links.init();
+  ql.labOutline.layout.init();
+  initLabReviewModal();
+  ql.labAssessment.init();
+  ql.labIntroduction.init( false );
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"All done? If you end this lab, you will lose all your work. You may not be able to restart the lab if there is a quota limit. Are you sure you want to end this lab?\n","in_progress":"*In Progress*","ending":"*Ending*","starting":"*Starting, please wait*","end_concurrent_labs":"Sorry, you can only run one lab at a time. To start this lab, please confirm that you want all of your existing labs to end.\n","copied":"Copied","no_resource":"Error retrieving resource.","no_support":"No Support","mac_press":"Press ⌘-C to copy","thanks_review":"Thanks for reviewing this lab.","windows_press":"Press Ctrl-C to copy","days":"days"} );
+  ql.labRun.init();
+  ql.initHeader();
+  ql.navigation.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+<style>
+  .mdl-layout__container {
+    position: static
+  }
+</style>
+</body>
+</html>
